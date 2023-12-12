@@ -1,0 +1,110 @@
+<script>
+
+
+function getRandomInt (min, max) {
+	return Math.floor(Math.random() * (max-min+1)) + min;
+}
+
+
+function getCard() {
+	var cards = ['6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+	return cards[getRandomInt(0, cards.length - 1)];
+}
+
+
+function getSum(hand) {
+	var sum = 0;
+// first find sum of all cards except 'A'
+	for (var i=0; i<hand.length; i++) {
+		if (hand[i] == 'J' || hand[i] == 'Q' || hand[i] == 'K') {
+			sum += 10;
+		} else if (hand[i] != 'A') {
+			sum += parseInt(hand[i]);
+		}
+// else if (sum <= 10) {sum += 11;} else {sum++;} - it will add 11 for A if it is first
+	}
+	for (var i=0; i<hand.length; i++) {
+		if (hand[i] == 'A') {
+			if (sum <= 10) {
+				sum += 11;
+			} else {
+				sum++;
+			}
+		}
+	}
+	//alert(sum);
+	return sum;
+}
+
+
+function getStatus(){
+	return "Dealer: " + dealer.join(", ") + "\nPlayer: " + player.join(", ") + "\n";
+}
+
+
+
+var dealer = [getCard()];
+var player = [getCard(), getCard()];
+var res = -1		// 1 - win, 0 - lose, -1 - draw
+//var player = ['A', '10'];
+
+// гк
+if (getSum(player) == 21) {
+	alert("Wow! Black Jack at the start of the game $_$");
+	res = 1
+} else {
+	var answer = "";
+	do {
+		answer = prompt(getStatus() + "\nDo you want to get a card? (1 - Yes, 0 - No)");
+
+		if (answer == "1") {
+			player.push(getCard());
+			sum = getSum(player);
+			if (sum>21) {
+				alert(getStatus() + "\nYour score is more than 21 :(");
+				res = 0
+				break;
+			} else if (sum == 21) {
+				alert(getStatus() + "\nBlack Jack!!!");
+				res = 1
+				break;
+			}
+		} else {
+			// player refused to get a card, dealer is taking a card now
+			while (getSum(dealer) < 17) {
+				dealer.push(getCard());
+			}//; ?
+
+			var sumDealer = getSum(dealer);
+			var sumPlayer = getSum(player);
+
+			if (sumDealer == 21) {
+				alert(getStatus() + "\nDealer has a Black Jack :(");
+				res = 0;
+			} else if (sumDealer > 21) {
+				alert(getStatus() + "\nDealer's score is more than 21 :)");
+				res = 1;
+			} else if (sumPlayer == sumDealer) {
+				alert(getStatus() + "\nYou and dealer have equal points!");
+			} else if (sumPlayer > sumDealer) {
+				alert(getStatus() + "\nYou have more points :)");
+				res = 1;
+			} else {	// else if (sumPlayer<sumDealer)
+				alert(getStatus() + "\nDealer has more points :(");
+				res = 0;
+			}
+		}
+		//alert(getStatus());
+	} while (answer == "1");
+}
+
+if (res == 1) {
+	alert("You win $$$");
+} else if (res == 0) {
+	alert("You lose...");
+} else {
+	alert("Draw!");
+}
+
+
+</script>
